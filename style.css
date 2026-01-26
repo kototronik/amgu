@@ -1,0 +1,44 @@
+:root {
+    --bg: #0d1117;
+    --card: #161b22;
+    --accent: #58a6ff;
+    --text: #c9d1d9;
+    --text-dim: #8b949e;
+    /* Цвета меток */
+    --tag-group: #238636;
+    --tag-teacher: #8957e5;
+    --tag-room: #d29922; 
+}
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--text); font-family: -apple-system, sans-serif; margin: 0; padding: 20px; display: flex; justify-content: center; }
+.container { width: 100%; max-width: 550px; }
+header { text-align: center; margin-bottom: 25px; }
+.status-bar { font-size: 0.85rem; color: var(--text-dim); }
+
+input {
+    width: 100%; padding: 16px; background: var(--card); border: 1px solid #30363d;
+    border-radius: 12px; color: white; font-size: 16px; outline: none; transition: 0.2s;
+}
+input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(88, 166, 255, 0.1); }
+
+.results-grid { margin-top: 20px; display: flex; flex-direction: column; gap: 8px; }
+
+.result-item {
+    background: var(--card); padding: 14px 18px; border-radius: 10px;
+    border: 1px solid #30363d; display: flex; justify-content: space-between; align-items: center;
+    animation: fadeIn 0.2s ease-out;
+}
+
+.badge {
+    font-size: 10px; text-transform: uppercase; padding: 2px 8px;
+    border-radius: 4px; font-weight: bold; color: white; margin-left: 10px;
+}
+.badge-group { background: var(--tag-group); }
+.badge-teacher { background: var(--tag-teacher); }
+.badge-room { background: var(--tag-room); }
+
+.fuzzy-hint { font-size: 12px; color: var(--text-dim); text-align: center; margin-top: 10px; }
+.no-results { text-align: center; padding: 40px; color: var(--text-dim); border: 1px dashed #30363d; border-radius: 12px; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
