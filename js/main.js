@@ -75,7 +75,7 @@ function showSearchView() {
     DOM.searchView.style.display = 'block';
     DOM.scheduleView.style.display = 'none';
     DOM.weekNav.style.display = 'none';
-    document.title = "АмГУ commiunity edition";
+    document.title = "АмГУ Community edition";
     history.replaceState(null, "", window.location.pathname);
 }
 
