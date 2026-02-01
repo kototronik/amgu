@@ -370,7 +370,7 @@ input:focus {
 }
 .day-section {
 
-    scroll-margin-top: 10px; 
+    scroll-margin-top: 50px; 
 }
 @keyframes fIn {
   from {
