@@ -120,7 +120,7 @@ function render(shouldScroll = false) {
    
     let displayName = "Расписание";
     if (currentSchedule.group_name) {
-        displayName = currentSchedule.group_name === "ИС254" ? "Чмиль" : currentSchedule.group_name;
+        displayName = currentSchedule.group_name === "ИС254" ? "кайфую в понедельник" : currentSchedule.group_name;
     } else if (currentSchedule.teacher) {
         displayName = currentSchedule.teacher;
     } else if (currentSchedule.classroom) {
