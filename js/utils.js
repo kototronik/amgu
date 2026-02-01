@@ -35,7 +35,6 @@ export function formatDate(isoString) {
 export function highlightText(fullText, query, trans) {
     if (!query) return fullText;
     
-    // Проверяем и оригинальный запрос, и переведенный
     const q = query.toLowerCase();
     const t = trans.toLowerCase();
     const lowerText = fullText.toLowerCase();
@@ -47,7 +46,6 @@ export function highlightText(fullText, query, trans) {
     if (match) {
         const startIdx = lowerText.indexOf(match);
         const endIdx = startIdx + match.length;
-        // Возвращаем текст с оберткой, сохраняя оригинальный регистр букв
         return fullText.slice(0, startIdx) + 
                `<span class="highlight">${fullText.slice(startIdx, endIdx)}</span>` + 
                fullText.slice(endIdx);

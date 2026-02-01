@@ -9,7 +9,6 @@ export const URLS = {
     }
 };
 
-// Вспомогательная функция для работы с кэшем расписаний
 export const Cache = {
     get: (key) => {
         const data = localStorage.getItem(`sched_${key}`);

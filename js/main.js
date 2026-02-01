@@ -8,17 +8,14 @@ let currentSchedule = null;
 let isNextWeek = false;
 
 async function init() {
-    // 1. ЛОГИКА АВТОПЕРЕКЛЮЧЕНИЯ НЕДЕЛИ
     const now = new Date();
-    const dayOfWeek = now.getDay(); // 0 - воскресенье, 1 - понедельник...
+    const dayOfWeek = now.getDay();
     const hour = now.getHours();
 
-    // Если сегодня воскресенье (0) или суббота (6) после 16:00
     if (dayOfWeek === 0 || (dayOfWeek === 6 && hour >= 16)) {
         isNextWeek = true;
     }
 
-    // 2. РАБОТА С КЭШЕМ БАЗЫ ДАННЫХ (Группы, Преподаватели, Кабинеты)
     const cachedBase = localStorage.getItem(CACHE_KEY);
     if (cachedBase) {
         try { 
@@ -28,10 +25,8 @@ async function init() {
         }
     }
 
-    // Фоновое обновление базы с сервера
     updateBase();
 
-    // 3. УПРАВЛЕНИЕ ИСТОРИЕЙ (Кнопка "Назад" в браузере)
     window.onpopstate = (e) => {
         if (e.state) {
             loadSchedule(e.state, false, false);
@@ -40,30 +35,24 @@ async function init() {
         }
     };
 
-    // 4. УСТАНОВКА СЛУШАТЕЛЕЙ СОБЫТИЙ (Поиск, кнопки навигации)
     setupEventListeners();
 
-    // 5. ОБРАБОТКА ПРЯМЫХ ССЫЛОК (Deep Linking)
     const params = new URLSearchParams(window.location.search);
     const item = { 
         type: params.get('type'), 
         id: params.get('id'),
-        name: params.get('name') // если передано имя в URL
+        name: params.get('name')
     };
 
     if (item.type && item.id) {
-        // Если открыли по ссылке, загружаем расписание
-        // Важно: передаем актуальное состояние isNextWeek
         loadSchedule(item, true, false);
-        
-        // Визуально обновляем переключатель недель
+
         if (isNextWeek) {
             updateNav(1); 
         } else {
             updateNav(0);
         }
     } else {
-        // Иначе показываем экран поиска
         showSearchView();
     }
 }
@@ -74,7 +63,7 @@ async function updateBase() {
         localStorage.setItem(CACHE_KEY, JSON.stringify({ d: combinedData }));
         if (DOM.loader) DOM.loader.textContent = "весь в твоем кармане :3";
     } catch(e) {
-        if (DOM.loader) DOM.loader.textContent = combinedData.length > 0 ? "весь в твоем кармане, но АмГУ спит.." : "АмГУ спит. жди пока проснется, или попробуй посмотреть у одногруппника :/";
+        if (DOM.loader) DOM.loader.textContent = combinedData.length > 0 ? "весь в твоем кармане, но у тебя включен впн, или АмГУ спит.." : "у тебя включен впн, или АмГУ спит :/";
     }
 }
 
@@ -107,10 +96,10 @@ async function loadSchedule(item, shouldScroll = true, pushState = true) {
         if (!cachedData) {
             DOM.scheduleList.innerHTML = `
                 <div class="error-block">
-                    <div style="font-size: 3rem; margin-bottom: 10px;">ой</div>
-                    <h3>а где инет?..</h3>
-                    <p>прости, это расписание я еще не скачал..</p>
-                    <button class="nav-btn" onclick="location.reload()" style="margin-top:15px; width:auto; padding:10px 20px;">Попробовать снова</button>
+                    <div style="font-size: 3rem; margin-bottom: 10px;">@_@</div>
+                    <h3>ой, я не смог загрузить расписание..</h3>
+                    <p>возможно, у тебя включен впн, или АмГУ прилег :/</p>
+                    <button class="nav-btn" onclick="location.reload()" style="margin-top:15px; width:auto; padding:10px 20px;">нажми меня через время</button>
                 </div>`;
         }
     }
@@ -150,14 +139,14 @@ if (!hasLines) {
         <div class="error-block" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;">
             <h3 style="margin-bottom: 20px; font-weight: 500;">занятий не найдено..</h3>
             <button id="error-back-btn" style="
-                background: #3c5881; 
+                background: #58a6ff; 
                 border: 1px solid #3f73a3; 
                 padding: 10px 25px; 
                 border-radius: 4px; 
                 cursor: pointer; 
                 font-size: 0.9rem;
                 color: #ffffff;
-                width: fit-content; /* Кнопка сожмется под размер текста */
+                width: fit-content; 
             ">к поиску</button>
         </div>`;
     
@@ -192,52 +181,52 @@ if (!hasLines) {
     let todayElem = null;
     let renderedDays = 0;
 
-
-// Внутри функции render() в main.js
 for (let d = 1; d <= 6; d++) {
-    const rawLessons = currentSchedule.timetable_tamplate_lines
+    const dayLessons = currentSchedule.timetable_tamplate_lines
         .filter(l => l.weekday === d && (l.parity === 0 || l.parity === parity) && l.discipline_str);
 
-    if (rawLessons.length === 0) continue;
-
-    // Группировка пар
-    const mergedLessons = [];
-    rawLessons.forEach(l => {
-        // Ключ для объединения: номер пары + название дисциплины
-        // (можно добавить и person_id/classroom_id для идеальной точности)
-        const key = `${l.lesson}_${l.discipline_str}`;
-        const existing = mergedLessons.find(m => `${m.lesson}_${m.discipline_str}` === key);
-
-        if (existing) {
-            // Если такая пара уже есть, добавляем группу в список, если её там нет
-            if (l.group_str && !existing.groups.some(g => g.id === l.group_id)) {
-                existing.groups.push({ id: l.group_id, name: l.group_str });
-            }
-        } else {
-            // Создаем новую запись и инициализируем массив групп
-            const newLesson = { ...l, groups: [] };
-            if (l.group_str) {
-                newLesson.groups.push({ id: l.group_id, name: l.group_str });
-            }
-            mergedLessons.push(newLesson);
-        }
-    });
+    if (dayLessons.length === 0) continue;
 
     renderedDays++;
     const isToday = (d === todayNum && !isNextWeek);
     const sec = document.createElement('div');
     sec.className = `day-section ${isToday ? 'is-today' : ''}`;
     if (isToday) todayElem = sec;
-
     sec.innerHTML = `<div class="day-title">${dayNames[d]} ${isToday ? '• СЕГОДНЯ' : ''}</div>`;
-    
-    // Сортируем объединенные пары по времени
-    mergedLessons.sort((a, b) => a.lesson - b.lesson)
-        .forEach(l => sec.appendChild(renderScheduleCard(l, times, loadSchedule)));
+
+    const slots = {};
+    dayLessons.forEach(l => {
+        if (!slots[l.lesson]) slots[l.lesson] = [];
+        
+        const existing = slots[l.lesson].find(item => 
+            item.discipline_str === l.discipline_str && 
+            item.subgroup === l.subgroup &&
+            item.person_id === l.person_id &&
+            item.classroom_id === l.classroom_id
+        );
+
+        if (existing) {
+            if (l.group_str && !existing.groups.some(g => g.id === l.group_id)) {
+                existing.groups.push({ id: l.group_id, name: l.group_str });
+            }
+        } else {
+            const newItem = { ...l, groups: [] };
+            if (l.group_str) newItem.groups.push({ id: l.group_id, name: l.group_str });
+            slots[l.lesson].push(newItem);
+        }
+    });
+
+    Object.keys(slots).sort((a, b) => a - b).forEach(lessonNum => {
+        const lessonData = {
+            lessonNum: lessonNum,
+            activities: slots[lessonNum]
+        };
+        sec.appendChild(renderScheduleCard(lessonData, times, loadSchedule));
+    });
 
     DOM.scheduleList.appendChild(sec);
 }
-    // Если в шаблоне пары есть, но конкретно на эту неделю ничего не выпало
+
     if (renderedDays === 0) {
         DOM.scheduleList.innerHTML = `
             <div class="error-block">
@@ -247,7 +236,6 @@ for (let d = 1; d <= 6; d++) {
             </div>`;
     }
 
-    // Авто-скролл к сегодняшнему дню
     if (shouldScroll && todayElem) {
         setTimeout(() => todayElem.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
     }
@@ -263,23 +251,18 @@ function setupEventListeners() {
         const labels = { group: 'Группа', teacher: 'преподаватель', room: 'Ауд.' };
         const classes = { group: 'badge-group', teacher: 'badge-teacher', room: 'badge-room' };
 
-        // 1. Прямой поиск с подсветкой
-// 1. Прямой поиск с сортировкой
 const exactMatches = combinedData
     .filter(i => i.name.toLowerCase().includes(q) || i.name.toLowerCase().includes(trans))
     .sort((a, b) => {
         const nameA = a.name.toLowerCase();
         const nameB = b.name.toLowerCase();
         
-        // Проверяем, начинается ли имя на запрос (q или trans)
         const aStarts = nameA.startsWith(q) || nameA.startsWith(trans);
         const bStarts = nameB.startsWith(q) || nameB.startsWith(trans);
 
-        // Если один начинается на запрос, а другой — нет, поднимаем первый выше
         if (aStarts && !bStarts) return -1;
         if (!aStarts && bStarts) return 1;
 
-        // Если оба начинаются или оба НЕ начинаются, сортируем просто по алфавиту
         return nameA.localeCompare(nameB);
     });
         
@@ -287,7 +270,6 @@ const exactMatches = combinedData
             const div = document.createElement('div');
             div.className = 'result-item';
             
-            // ПРИМЕНЯЕМ ПОДСВЕТКУ И НОВУЮ ВЕРСТКУ
             const highlighted = highlightText(item.name, q, trans);
             div.innerHTML = `
                 <div class="result-name">${highlighted}</div>
@@ -298,7 +280,6 @@ const exactMatches = combinedData
             DOM.results.appendChild(div);
         });
 
-        // 2. Нечеткий поиск
         if (exactMatches.length < 3 && q.length >= 3) {
             const fuzzy = combinedData
                 .filter(i => i.type === 'teacher')
@@ -323,7 +304,6 @@ const exactMatches = combinedData
                         const div = document.createElement('div');
                         div.className = 'result-item';
                         
-                        // ДЛЯ НЕЧЕТКОГО ПОДСВЕЧИВАЕМ ФАМИЛИЮ ЦЕЛИКОМ
                         const parts = res.item.name.split(' ');
                         const surname = `<span class="highlight">${parts[0]}</span>`;
                         const rest = parts.slice(1).join(' ');
