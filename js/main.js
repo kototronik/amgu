@@ -8,20 +8,65 @@ let currentSchedule = null;
 let isNextWeek = false;
 
 async function init() {
+    // 1. ЛОГИКА АВТОПЕРЕКЛЮЧЕНИЯ НЕДЕЛИ
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0 - воскресенье, 1 - понедельник...
+    const hour = now.getHours();
+
+    // Если сегодня воскресенье (0) или суббота (6) после 16:00
+    if (dayOfWeek === 0 || (dayOfWeek === 6 && hour >= 16)) {
+        isNextWeek = true;
+    }
+
+    // 2. РАБОТА С КЭШЕМ БАЗЫ ДАННЫХ (Группы, Преподаватели, Кабинеты)
     const cachedBase = localStorage.getItem(CACHE_KEY);
     if (cachedBase) {
-        try { combinedData = JSON.parse(cachedBase).d || []; } catch(e) {}
+        try { 
+            combinedData = JSON.parse(cachedBase).d || []; 
+        } catch(e) {
+            console.error("Ошибка парсинга кэша:", e);
+        }
     }
+
+    // Фоновое обновление базы с сервера
     updateBase();
-    window.onpopstate = (e) => e.state ? loadSchedule(e.state, false, false) : showSearchView();
+
+    // 3. УПРАВЛЕНИЕ ИСТОРИЕЙ (Кнопка "Назад" в браузере)
+    window.onpopstate = (e) => {
+        if (e.state) {
+            loadSchedule(e.state, false, false);
+        } else {
+            showSearchView();
+        }
+    };
+
+    // 4. УСТАНОВКА СЛУШАТЕЛЕЙ СОБЫТИЙ (Поиск, кнопки навигации)
     setupEventListeners();
 
+    // 5. ОБРАБОТКА ПРЯМЫХ ССЫЛОК (Deep Linking)
     const params = new URLSearchParams(window.location.search);
-    const item = { type: params.get('type'), id: params.get('id') };
-    if (item.type && item.id) loadSchedule(item, true, false);
-    else showSearchView();
-}
+    const item = { 
+        type: params.get('type'), 
+        id: params.get('id'),
+        name: params.get('name') // если передано имя в URL
+    };
 
+    if (item.type && item.id) {
+        // Если открыли по ссылке, загружаем расписание
+        // Важно: передаем актуальное состояние isNextWeek
+        loadSchedule(item, true, false);
+        
+        // Визуально обновляем переключатель недель
+        if (isNextWeek) {
+            updateNav(1); 
+        } else {
+            updateNav(0);
+        }
+    } else {
+        // Иначе показываем экран поиска
+        showSearchView();
+    }
+}
 async function updateBase() {
     try {
         const data = await fetchBase();
@@ -148,26 +193,50 @@ if (!hasLines) {
     let renderedDays = 0;
 
 
-    for (let d = 1; d <= 6; d++) {
-        const lessons = currentSchedule.timetable_tamplate_lines
-            .filter(l => l.weekday === d && (l.parity === 0 || l.parity === parity) && l.discipline_str)
-            .sort((a,b) => a.lesson - b.lesson);
+// Внутри функции render() в main.js
+for (let d = 1; d <= 6; d++) {
+    const rawLessons = currentSchedule.timetable_tamplate_lines
+        .filter(l => l.weekday === d && (l.parity === 0 || l.parity === parity) && l.discipline_str);
 
-        if (lessons.length === 0) continue;
-        
-        renderedDays++;
-        const isToday = (d === todayNum && !isNextWeek);
-        const sec = document.createElement('div');
-        sec.className = `day-section ${isToday ? 'is-today' : ''}`;
-        if (isToday) todayElem = sec;
+    if (rawLessons.length === 0) continue;
 
-        sec.innerHTML = `<div class="day-title">${dayNames[d]} ${isToday ? '• СЕГОДНЯ' : ''}</div>`;
-        
-        // Рендер карточки пар через функцию из ui.js
-        lessons.forEach(l => sec.appendChild(renderScheduleCard(l, times, loadSchedule)));
-        DOM.scheduleList.appendChild(sec);
-    }
+    // Группировка пар
+    const mergedLessons = [];
+    rawLessons.forEach(l => {
+        // Ключ для объединения: номер пары + название дисциплины
+        // (можно добавить и person_id/classroom_id для идеальной точности)
+        const key = `${l.lesson}_${l.discipline_str}`;
+        const existing = mergedLessons.find(m => `${m.lesson}_${m.discipline_str}` === key);
 
+        if (existing) {
+            // Если такая пара уже есть, добавляем группу в список, если её там нет
+            if (l.group_str && !existing.groups.some(g => g.id === l.group_id)) {
+                existing.groups.push({ id: l.group_id, name: l.group_str });
+            }
+        } else {
+            // Создаем новую запись и инициализируем массив групп
+            const newLesson = { ...l, groups: [] };
+            if (l.group_str) {
+                newLesson.groups.push({ id: l.group_id, name: l.group_str });
+            }
+            mergedLessons.push(newLesson);
+        }
+    });
+
+    renderedDays++;
+    const isToday = (d === todayNum && !isNextWeek);
+    const sec = document.createElement('div');
+    sec.className = `day-section ${isToday ? 'is-today' : ''}`;
+    if (isToday) todayElem = sec;
+
+    sec.innerHTML = `<div class="day-title">${dayNames[d]} ${isToday ? '• СЕГОДНЯ' : ''}</div>`;
+    
+    // Сортируем объединенные пары по времени
+    mergedLessons.sort((a, b) => a.lesson - b.lesson)
+        .forEach(l => sec.appendChild(renderScheduleCard(l, times, loadSchedule)));
+
+    DOM.scheduleList.appendChild(sec);
+}
     // Если в шаблоне пары есть, но конкретно на эту неделю ничего не выпало
     if (renderedDays === 0) {
         DOM.scheduleList.innerHTML = `

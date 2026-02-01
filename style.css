@@ -384,3 +384,30 @@ input:focus {
     opacity: 1;
   }
 }
+.groups-row {
+    display: flex;
+    flex-wrap: wrap; /* Если групп много, они перенесутся на еще одну строку */
+    gap: 8px;
+    margin-top: 12px; /* Отступ от строки с преподом */
+    padding-top: 8px;
+    border-top: 1px solid var(--border); /* Тонкая линия-разделитель */
+}
+
+.group-tag {
+    background: rgba(255, 255, 255, 0.05); /* Легкий фон для групп */
+    padding: 4px 8px !important;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    transition: background 0.2s;
+}
+
+.group-tag:hover {
+    background: rgba(88, 166, 255, 0.2);
+}
+
+/* Немного подправим info-row, чтобы она не конфликтовала */
+.info-row {
+    display: flex;
+    gap: 15px;
+    flex-wrap: wrap;
+}
