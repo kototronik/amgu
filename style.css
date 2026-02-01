@@ -234,7 +234,7 @@ input:focus {
 #week-status {
     display: inline-block;
     padding: 4px 14px;
-    margin-top: -10px;
+    margin-top: -8px;
     border-radius: 5px;
     background-color: rgba(2, 7, 14, 0.247); 
     color:  var(--accent);
