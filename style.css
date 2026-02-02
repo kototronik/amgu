@@ -394,7 +394,7 @@ input:focus {
     padding: 4px 8px !important;
     border-radius: 6px;
     font-size: 0.85rem;
-    transition: background 0.2s;
+    transition: 0.2s;
 }
 
 .group-tag:hover {
@@ -414,6 +414,33 @@ input:focus {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     margin-bottom: 4px;
+}
+.subgroup-picker {
+    display: flex;
+    background: var(--card);
+    padding: 4px;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin-bottom: 15px;
+    gap: 4px;
+}
+
+.subgroup-picker button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 8px;
+    border-radius: 7px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.subgroup-picker button.active {
+    background: var(--accent);
+    color: white;
 }
 
 .discipline {

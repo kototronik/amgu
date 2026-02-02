@@ -44,7 +44,7 @@ export function renderScheduleCard(slot, times, loadFn) {
                </div>`
             : '';
 
-        // Информация о последнем обновлении
+
         const updateHtml = activity.updated_at 
             ? `<div class="update-label"> ред: ${formatDate(activity.updated_at)}</div>` 
             : '';
@@ -78,9 +78,8 @@ el.onclick = (e) => {
     const id = el.getAttribute('data-id');
     const name = el.querySelector('span').innerText.trim();
 
-    // Проверяем на валидность ID
+
     if (id && id !== "null" && id !== "0" && id !== "undefined") {
-        // Добавим класс загрузки для фидбека (опционально)
         el.style.opacity = '0.5'; 
         loadFn({ type, id: String(id), name });
     }
