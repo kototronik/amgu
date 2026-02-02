@@ -356,8 +356,32 @@ const exactMatches = combinedData
     };
 
     if (document.getElementById('btn-home')) document.getElementById('btn-home').onclick = showSearchView;
-    if (document.getElementById('btn-curr')) document.getElementById('btn-curr').onclick = () => { isNextWeek = false; updateNav(0); render(true); };
-    if (document.getElementById('btn-next')) document.getElementById('btn-next').onclick = () => { isNextWeek = true; updateNav(1); render(false); };
+ if (document.getElementById('btn-curr')) {
+    document.getElementById('btn-curr').onclick = () => {
+        if (!isNextWeek) {
+        
+            const todayElem = document.querySelector('.is-today');
+            if (todayElem) {
+                todayElem.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
+        } else {
+         
+            isNextWeek = false;
+            updateNav(0);
+            render(false); 
+        }
+    };
+}
+
+if (document.getElementById('btn-next')) {
+    document.getElementById('btn-next').onclick = () => {
+        if (isNextWeek) return;
+
+        isNextWeek = true;
+        updateNav(1);
+        render(false); 
+    };
+} 
 }
 
 function updateNav(idx) {
