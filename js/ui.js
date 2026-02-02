@@ -72,13 +72,19 @@ export function renderScheduleCard(slot, times, loadFn) {
     card.innerHTML = html;
 
     card.querySelectorAll('.link-item').forEach(el => {
-        el.onclick = (e) => {
-            e.stopPropagation();
-            const { type, id } = el.dataset;
-            if (id && id !== "null" && id !== "0") {
-                loadFn({ type, id, name: el.querySelector('span').textContent });
-            }
-        };
+el.onclick = (e) => {
+    e.stopPropagation();
+    const type = el.getAttribute('data-type');
+    const id = el.getAttribute('data-id');
+    const name = el.querySelector('span').innerText.trim();
+
+    // Проверяем на валидность ID
+    if (id && id !== "null" && id !== "0" && id !== "undefined") {
+        // Добавим класс загрузки для фидбека (опционально)
+        el.style.opacity = '0.5'; 
+        loadFn({ type, id: String(id), name });
+    }
+};
     });
 
     return card;
