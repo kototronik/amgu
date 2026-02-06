@@ -461,3 +461,22 @@ input:focus {
 .activity-block {
     padding: 2px 0;
 }
+
+
+.lesson-card.current-lesson {
+    border-color: #306eb4b2;
+    box-shadow: 0 0 15px rgba(88, 166, 255, 0.2);
+    position: relative;
+}
+
+.lesson-card.current-lesson::before {
+    font-weight: 900;
+    padding: 2px 8px;
+    border-radius: 4px;
+}
+
+.lesson-card.next-lesson {
+    box-shadow: 0 0 10px rgba(101, 105, 117, 0.384);
+    opacity: 0.9;
+}
+
