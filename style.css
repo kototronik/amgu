@@ -543,7 +543,7 @@ input:focus {
     display: block;
 }
 
-/* 6. Элементы внутри меню */
+
 .menu-header {
     display: flex;
     justify-content: space-between;
@@ -567,9 +567,9 @@ input:focus {
     margin-bottom: 25px;
 }
 
-/* Контейнер для индикатора */
+
 .subgroup-drawer {
-    position: relative; /* Чтобы индикатор позиционировался внутри */
+    position: relative;
     display: flex;
     background: var(--bg);
     padding: 4px;
@@ -579,7 +579,7 @@ input:focus {
     z-index: 1;
 }
 
-/* Сам плавающий индикатор */
+
 .subgroup-drawer .drawer-indicator {
     position: absolute;
     top: 4px;
@@ -593,7 +593,6 @@ input:focus {
     z-index: -1; 
 }
 
-/* Убираем фон у активной кнопки, так как теперь под ней индикатор */
 .subgroup-drawer button.active {
     background: transparent;
     color: white;
@@ -612,13 +611,11 @@ input:focus {
     transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Эффект при наведении */
 .subgroup-drawer button:hover:not(.active) {
     color: var(--text);
     background: rgba(255, 255, 255, 0.05);
 }
 
-/* Активное состояние в стиле старого пикера */
 .subgroup-drawer button.active {
     background: var(--accent);
     color: white;

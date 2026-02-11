@@ -193,7 +193,6 @@ export function renderSubgroupPicker() {
     if (section) section.style.display = hasSubgroups ? 'block' : 'none';
     if (!hasSubgroups) return;
 
-    // 1. Проверяем, созданы ли уже кнопки, чтобы не перезаписывать их каждый раз
     let indicator = container.querySelector('.drawer-indicator');
     
     if (!indicator) {
@@ -205,18 +204,15 @@ export function renderSubgroupPicker() {
         `;
         indicator = container.querySelector('.drawer-indicator');
 
-        // Вешаем события только один раз при создании
         container.querySelectorAll('button').forEach(btn => {
             btn.onclick = () => {
                 const sub = parseInt(btn.dataset.sub);
                 if (sub === currentSubgroup) return;
 
                 setCurrentSubgroup(sub);
-                
-                // Сначала обновляем визуал (индикатор и кнопки)
+
                 updatePickerUI(container, sub);
 
-                // Потом логику
                 const url = new URL(window.location);
                 if (sub > 0) url.searchParams.set('sub', sub);
                 else url.searchParams.delete('sub');
@@ -227,11 +223,11 @@ export function renderSubgroupPicker() {
         });
     }
 
-    // 2. Обновляем состояние (какая кнопка активна и где индикатор)
+
     updatePickerUI(container, currentSubgroup);
 }
 
-// Вынесем обновление визуала в отдельную функцию для чистоты
+
 function updatePickerUI(container, activeSub) {
     const indicator = container.querySelector('.drawer-indicator');
     const buttons = container.querySelectorAll('button');
