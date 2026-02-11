@@ -182,38 +182,65 @@ if (shouldScroll && todayElem && !hasAutoscrolled) {
         }, 100);
     }
 }
-export function renderSubgroupPicker(visible) {
-    let picker = document.getElementById('subgroup-picker');
+export function renderSubgroupPicker() {
+    const container = DOM.subgroupContainer;
+    if (!container) return;
 
-    if (!visible) {
-        if (picker) picker.style.display = 'none';
-        return;
+    const activeLines = _currentSchedule?.timetable_tamplate_lines?.filter(l => l.discipline_str) || [];
+    const hasSubgroups = activeLines.some(l => l.subgroup > 0);
+
+    const section = container.closest('.menu-section');
+    if (section) section.style.display = hasSubgroups ? 'block' : 'none';
+    if (!hasSubgroups) return;
+
+    // 1. Проверяем, созданы ли уже кнопки, чтобы не перезаписывать их каждый раз
+    let indicator = container.querySelector('.drawer-indicator');
+    
+    if (!indicator) {
+        container.innerHTML = `
+            <div class="drawer-indicator" style="width: calc(33.33% - 4px);"></div>
+            <button data-sub="0">Все</button>
+            <button data-sub="1">1</button>
+            <button data-sub="2">2</button>
+        `;
+        indicator = container.querySelector('.drawer-indicator');
+
+        // Вешаем события только один раз при создании
+        container.querySelectorAll('button').forEach(btn => {
+            btn.onclick = () => {
+                const sub = parseInt(btn.dataset.sub);
+                if (sub === currentSubgroup) return;
+
+                setCurrentSubgroup(sub);
+                
+                // Сначала обновляем визуал (индикатор и кнопки)
+                updatePickerUI(container, sub);
+
+                // Потом логику
+                const url = new URL(window.location);
+                if (sub > 0) url.searchParams.set('sub', sub);
+                else url.searchParams.delete('sub');
+                history.replaceState(null, "", url);
+
+                render(false);
+            };
+        });
     }
 
-    if (!picker) {
-        picker = document.createElement('div');
-        picker.id = 'subgroup-picker';
-        picker.className = 'subgroup-picker';
-        DOM.scheduleList.parentNode.insertBefore(picker, DOM.scheduleList);
+    // 2. Обновляем состояние (какая кнопка активна и где индикатор)
+    updatePickerUI(container, currentSubgroup);
+}
+
+// Вынесем обновление визуала в отдельную функцию для чистоты
+function updatePickerUI(container, activeSub) {
+    const indicator = container.querySelector('.drawer-indicator');
+    const buttons = container.querySelectorAll('button');
+
+    if (indicator) {
+        indicator.style.transform = `translateX(${activeSub * 100}%)`;
     }
 
-    picker.style.display = 'flex';
-    picker.innerHTML = `
-        <button class="${currentSubgroup === 0 ? 'active' : ''}" data-sub="0">Все</button>
-        <button class="${currentSubgroup === 1 ? 'active' : ''}" data-sub="1">1 подгр.</button>
-        <button class="${currentSubgroup === 2 ? 'active' : ''}" data-sub="2">2 подгр.</button>
-    `;
-
-    picker.querySelectorAll('button').forEach(btn => {
-        btn.onclick = () => {
-            setCurrentSubgroup(parseInt(btn.dataset.sub));
-            const url = new URL(window.location);
-            if (currentSubgroup > 0) url.searchParams.set('sub', currentSubgroup);
-            else url.searchParams.delete('sub');
-            history.replaceState(history.state, "", url);
-
-            const evt = new CustomEvent('amgu_render');
-            window.dispatchEvent(evt);
-        };
+    buttons.forEach(btn => {
+        btn.classList.toggle('active', parseInt(btn.dataset.sub) === activeSub);
     });
 }

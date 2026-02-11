@@ -262,7 +262,7 @@ input:focus {
   border-radius: 14px;
   border: 1px solid var(--border);
   display: flex;
-  z-index: 1000;
+  /* z-index: 1100; */
 }
 
 .schedule-nav-bar {
@@ -415,33 +415,6 @@ input:focus {
     letter-spacing: 0.5px;
     margin-bottom: 4px;
 }
-.subgroup-picker {
-    display: flex;
-    background: var(--card);
-    padding: 4px;
-    border-radius: 10px;
-    border: 1px solid var(--border);
-    margin-bottom: 15px;
-    gap: 4px;
-}
-
-.subgroup-picker button {
-    flex: 1;
-    background: transparent;
-    border: none;
-    color: var(--text-dim);
-    padding: 8px;
-    border-radius: 7px;
-    font-size: 0.8rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.subgroup-picker button.active {
-    background: var(--accent);
-    color: white;
-}
 
 .discipline {
     font-size: 1.05rem;
@@ -480,3 +453,174 @@ input:focus {
     opacity: 0.9;
 }
 
+
+.menu-wrapper {
+    position: relative;
+    width: 42px; 
+    height: 42px;
+    z-index: 1000;
+}
+
+
+#btn-menu {
+    position: relative;
+    z-index: 1001; 
+    transition: opacity 0.2s ease, transform 0.2s ease;
+}
+
+
+#btn-menu.active {
+    opacity: 0;
+    transform: scale(0.5);
+    pointer-events: none; 
+}
+
+
+.side-menu {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 42px;  
+    height: 42px; 
+    background: var(--card);
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    overflow: hidden;
+    opacity: 0;
+    visibility: hidden;
+    z-index: 1002; 
+    
+
+    transition: 
+        width 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+        height 0.1s cubic-bezier(0.4, 0, 0.2, 1),
+        border-radius 0.3s ease,
+        opacity 0.2s ease,
+        visibility 0.4s;
+    transform-origin: center center;
+}
+
+
+.side-menu.active {
+    opacity: 1;
+    visibility: visible;
+    width: 280px;  
+    height: auto;  
+    min-height: 150px;
+    border-radius: 16px;
+    padding: 20px;
+}
+
+
+.menu-header, .menu-content {
+    opacity: 0;
+    transform: translateY(10px); 
+    transition: opacity 0.1s ease, transform 0.1s ease;
+    min-width: 240px; 
+}
+
+.side-menu.active .menu-header,
+.side-menu.active .menu-content {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.1s; 
+}
+
+
+.menu-overlay {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100vw; 
+    height: 100vh;
+    background: rgba(0,0,0,0.5);
+    backdrop-filter: blur(4px);
+    display: none;
+    z-index: 999;
+}
+
+.menu-overlay.active {
+    display: block;
+}
+
+/* 6. Элементы внутри меню */
+.menu-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+#menu-close {
+    background: transparent;
+    border: none;
+    color: var(--text);
+    font-size: 24px;
+    cursor: pointer;
+    line-height: 1;
+    padding: 5px;
+}
+
+.menu-section {
+    margin-bottom: 25px;
+}
+
+/* Контейнер для индикатора */
+.subgroup-drawer {
+    position: relative; /* Чтобы индикатор позиционировался внутри */
+    display: flex;
+    background: var(--bg);
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    margin-top: 12px;
+    z-index: 1;
+}
+
+/* Сам плавающий индикатор */
+.subgroup-drawer .drawer-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 4px;
+    width: calc(33.33% - 4px); 
+    background: var(--accent);
+    border-radius: 9px;
+    transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    z-index: -1; 
+}
+
+/* Убираем фон у активной кнопки, так как теперь под ней индикатор */
+.subgroup-drawer button.active {
+    background: transparent;
+    color: white;
+    box-shadow: none; 
+}
+.subgroup-drawer button {
+    flex: 1;
+    background: transparent;
+    border: none;
+    color: var(--text-dim);
+    padding: 10px 8px;
+    border-radius: 9px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Эффект при наведении */
+.subgroup-drawer button:hover:not(.active) {
+    color: var(--text);
+    background: rgba(255, 255, 255, 0.05);
+}
+
+/* Активное состояние в стиле старого пикера */
+.subgroup-drawer button.active {
+    background: var(--accent);
+    color: white;
+    box-shadow: 0 2px 8px rgba(88, 166, 255, 0.25);
+}

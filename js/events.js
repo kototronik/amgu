@@ -25,6 +25,35 @@ export function updateNav(idx) {
 }
 
 export function setupEventListeners() {
+    const btnMenu = document.getElementById('btn-menu');
+    const btnClose = document.getElementById('menu-close');
+    
+    const toggleMenu = () => {
+        if (DOM.sideMenu && DOM.menuOverlay) {
+            // Переключаем активное состояние для меню и оверлея
+            DOM.sideMenu.classList.toggle('active');
+            DOM.menuOverlay.classList.toggle('active');
+            
+            // КЛЮЧЕВОЙ МОМЕНТ: переключаем класс на кнопке гамбургера.
+            // В CSS мы прописали, что #btn-menu.active становится прозрачным.
+            if (btnMenu) {
+                btnMenu.classList.toggle('active');
+            }
+            
+            // Если открыли — обновляем кнопки подгрупп внутри
+            if (DOM.sideMenu.classList.contains('active')) {
+                // Предполагается, что эта функция импортирована или доступна в области видимости
+                if (typeof renderSubgroupPicker === 'function') {
+                    renderSubgroupPicker(); 
+                }
+            }
+        }
+    };
+
+    // Используем addEventListener вместо onclick для надежности
+    if (btnMenu) btnMenu.onclick = toggleMenu;
+    if (btnClose) btnClose.onclick = toggleMenu;
+    if (DOM.menuOverlay) DOM.menuOverlay.onclick = toggleMenu;
     DOM.searchInput.oninput = (e) => {
         const q = e.target.value.toLowerCase().trim();
         DOM.results.innerHTML = '';
@@ -33,7 +62,7 @@ export function setupEventListeners() {
         const trans = smartTranslate(q);
         const labels = { group: 'Группа', teacher: 'преподаватель', room: 'Ауд.' };
         const classes = { group: 'badge-group', teacher: 'badge-teacher', room: 'badge-room' };
-
+        
         const exactMatches = combinedData
             .filter(i => i.name.toLowerCase().includes(q) || i.name.toLowerCase().includes(trans))
             .sort((a, b) => {

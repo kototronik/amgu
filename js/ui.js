@@ -15,7 +15,10 @@ export const DOM = {
     results: document.getElementById('resultsList'),
     searchInput: document.getElementById('searchInput'),
     weekStatus: document.getElementById('week-status'),
-    indicator: document.getElementById('nav-indicator')
+    indicator: document.getElementById('nav-indicator'),
+    sideMenu: document.getElementById('side-menu'),
+    menuOverlay: document.getElementById('menu-overlay'),
+    subgroupContainer: document.getElementById('subgroup-container')
 };
 
 export function renderScheduleCard(slot, times, loadFn) {
