@@ -23,3 +23,8 @@ export async function updateBase() {
         if (DOM.loader) DOM.loader.textContent = combinedData.length > 0 ? "весь в твоем кармане, но у тебя включен впн, или АмГУ спит.." : "у тебя включен впн, или АмГУ спит :/";
     }
 }
+
+export let hasAutoscrolled = false;
+export function setHasAutoscrolled(val) {
+    hasAutoscrolled = val;
+}

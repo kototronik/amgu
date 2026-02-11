@@ -2,6 +2,7 @@ import { DOM, renderScheduleCard } from './ui.js';
 import { currentSchedule as _currentSchedule, setCurrentSubgroup, currentSubgroup, isNextWeek } from './state.js';
 import { formatDate } from './utils.js';
 import { setCurrentSchedule } from './state.js'; 
+import { hasAutoscrolled, setHasAutoscrolled } from './state.js';
 
 export function render(shouldScroll = false) {
     const now = new Date();
@@ -155,18 +156,32 @@ export function render(shouldScroll = false) {
         DOM.scheduleList.innerHTML = `<div class="error-block"><h3>тут пар нет</h3><p>попробуй сменить неделю или подгруппу.</p></div>`;
     }
 
-    if (shouldScroll && todayElem) {
+if (shouldScroll && todayElem && !hasAutoscrolled) {
+        setHasAutoscrolled(true); 
+
         setTimeout(() => {
             const currentLesson = todayElem.querySelector('.current-lesson');
             const nextLesson = todayElem.querySelector('.next-lesson');
-
             const target = currentLesson || nextLesson || todayElem;
 
+            const stopScroll = () => {
+                window.scrollTo({ top: window.scrollY, behavior: 'instant' });
+                window.removeEventListener('wheel', stopScroll);
+                window.removeEventListener('touchmove', stopScroll);
+            };
+
+            window.addEventListener('wheel', stopScroll);
+            window.addEventListener('touchmove', stopScroll);
+
             target.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+            setTimeout(() => {
+                window.removeEventListener('wheel', stopScroll);
+                window.removeEventListener('touchmove', stopScroll);
+            }, 1000);
         }, 100);
     }
 }
-
 export function renderSubgroupPicker(visible) {
     let picker = document.getElementById('subgroup-picker');
 
