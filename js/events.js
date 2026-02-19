@@ -3,6 +3,7 @@ import { smartTranslate, levDistance, highlightText } from './utils.js';
 import { combinedData, setCurrentSubgroup, CACHE_KEY, setIsNextWeek, isNextWeek } from './state.js';
 import { loadSchedule } from './loader.js';
 import { render } from './renderer.js';
+import { setHasAutoscrolled } from './state.js';
 
 export function showSearchView() {
     setCurrentSubgroup(0);
@@ -28,6 +29,8 @@ export function setupEventListeners() {
     const btnMenu = document.getElementById('btn-menu');
     const btnClose = document.getElementById('menu-close');
     
+
+
     const toggleMenu = () => {
         if (DOM.sideMenu && DOM.menuOverlay) {
             DOM.sideMenu.classList.toggle('active');
@@ -156,9 +159,12 @@ export function setupEventListeners() {
         };
     }
 
-    window.addEventListener('amgu_load_schedule', (e) => {
+window.addEventListener('amgu_load_schedule', (e) => {
         const { item, shouldScroll = true, pushState = true } = e.detail;
+        if (shouldScroll) {
+            setHasAutoscrolled(false);
+        }
         loadSchedule(item, shouldScroll, pushState);
     });
-    window.addEventListener('amgu_render', () => render(false));
+
 }
