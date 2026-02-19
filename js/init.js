@@ -1,4 +1,4 @@
-import { updateBase, combinedData as _combinedData, setCombinedData, setIsNextWeek, isNextWeek, setCurrentSubgroup } from './state.js';
+import { updateBase, combinedData as _combinedData, setCombinedData, setIsNextWeek, isNextWeek, setCurrentSubgroup, setShowMoodle } from './state.js';
 import { setupEventListeners, showSearchView, updateNav } from './events.js';
 import { loadSchedule } from './loader.js';
 
@@ -7,6 +7,16 @@ export default async function init() {
     const dayOfWeek = now.getDay();
     const hour = now.getHours();
 
+
+const params_M = new URLSearchParams(window.location.search);
+
+
+const moodParam = params_M.get('md');
+if (moodParam === '0') {
+    setShowMoodle(false);
+} else {
+    setShowMoodle(true);
+}
     if (dayOfWeek === 0 || (dayOfWeek === 6 && hour >= 16)) {
         setIsNextWeek(true);
     }

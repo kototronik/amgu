@@ -621,3 +621,55 @@ input:focus {
     color: white;
     box-shadow: 0 2px 8px rgba(88, 166, 255, 0.25);
 }
+
+#moodle-picker {
+    margin-top: 12px;
+    display: flex;
+    justify-content: center; 
+}
+
+
+.moodle-toggle-btn {
+    width: fit-content; 
+    min-width: 70px;   
+    padding: 10px 20px; 
+    border-radius: 12px;
+    border: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.03);
+    color: var(--text-dim);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+
+.moodle-toggle-btn:hover {
+    background: rgba(255, 255, 255, 0.07);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+
+.moodle-toggle-btn.active {
+    background: var(--accent); 
+    border-color: var(--accent);
+    color: #fff;
+    box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3); 
+}
+
+.moodle-toggle-btn:active {
+    transform: scale(0.96);
+}
+
+
+@keyframes pulse-dot {
+    0% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.7; transform: scale(1.1); }
+    100% { opacity: 1; transform: scale(1); }
+}
+
+
+.moodle-toggle-btn span {
+    pointer-events: none;
+    user-select: none;
+}

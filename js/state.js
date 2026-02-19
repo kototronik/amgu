@@ -28,3 +28,8 @@ export let hasAutoscrolled = false;
 export function setHasAutoscrolled(val) {
     hasAutoscrolled = val;
 }
+
+export let showMoodle = true; 
+export function setShowMoodle(val) {
+    showMoodle = val;
+}

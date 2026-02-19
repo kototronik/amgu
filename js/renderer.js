@@ -1,8 +1,15 @@
 import { DOM, renderScheduleCard } from './ui.js';
-import { currentSchedule as _currentSchedule, setCurrentSubgroup, currentSubgroup, isNextWeek } from './state.js';
+import { 
+    currentSchedule as _currentSchedule, 
+    setCurrentSubgroup, 
+    currentSubgroup, 
+    isNextWeek,
+    hasAutoscrolled, 
+    setHasAutoscrolled,
+    showMoodle, 
+    setShowMoodle 
+} from './state.js';
 import { formatDate } from './utils.js';
-import { setCurrentSchedule } from './state.js'; 
-import { hasAutoscrolled, setHasAutoscrolled } from './state.js';
 
 export function render(shouldScroll = false) {
     const now = new Date();
@@ -19,10 +26,10 @@ export function render(shouldScroll = false) {
         return { start, end };
     };
 
-
     const currentSchedule = _currentSchedule;
     if (!currentSchedule) return;
     DOM.scheduleList.innerHTML = '';
+
 
     let displayName = "Расписание";
     if (currentSchedule.group_name) {
@@ -37,16 +44,18 @@ export function render(shouldScroll = false) {
     document.title = displayName;
 
     const activeLines = currentSchedule.timetable_tamplate_lines.filter(l => l.discipline_str);
-    const hasSubgroups = activeLines.some(l => l.subgroup > 0);
+    
 
+    const hasSubgroups = activeLines.some(l => l.subgroup > 0);
     if (!hasSubgroups) {
         setCurrentSubgroup(0);
     }
 
-    renderSubgroupPicker(hasSubgroups);
 
-    const hasLines = activeLines.length > 0;
-    if (!hasLines) {
+    renderSubgroupPicker();
+    renderMoodleToggle();
+
+    if (activeLines.length === 0) {
         DOM.weekStatus.style.display = "none";
         DOM.scheduleList.innerHTML = `
             <div class="error-block" style="display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px 20px;">
@@ -66,11 +75,7 @@ export function render(shouldScroll = false) {
     const currentWeek = currentSchedule.current_week || 1;
     const parity = isNextWeek ? (currentWeek === 1 ? 2 : 1) : currentWeek;
 
-    DOM.weekStatus.innerHTML = `
-        <div style="display: flex; align-items: center; gap: 6px;">
-        <span>${parity}-я неделя</span>
-        </div>
-    `;
+    DOM.weekStatus.innerHTML = `<div style="display: flex; align-items: center; gap: 6px;"><span>${parity}-я неделя</span></div>`;
 
     const dayNames = ["Воскресенье", "Понедельник", "Вторник", "Среда", "Четверг", "Пятница", "Суббота"];
     const todayNum = new Date().getDay();
@@ -90,8 +95,12 @@ export function render(shouldScroll = false) {
             const isCorrectDay = l.weekday === d;
             const isCorrectParity = (l.parity === 0 || l.parity === parity);
             const isCorrectSubgroup = currentSubgroup === 0 || l.subgroup === 0 || l.subgroup === currentSubgroup;
+            
 
-            return isCorrectDay && isCorrectParity && isCorrectSubgroup;
+            const isMoodle = l.classroom_str === "Moodle";
+            const moodleVisible = showMoodle || !isMoodle;
+
+            return isCorrectDay && isCorrectParity && isCorrectSubgroup && moodleVisible;
         });
 
         if (dayLessons.length === 0) continue;
@@ -127,7 +136,6 @@ export function render(shouldScroll = false) {
         Object.keys(slots).sort((a, b) => a - b).forEach(lessonNum => {
             const lessonData = { lessonNum: lessonNum, activities: slots[lessonNum] };
             const card = renderScheduleCard(lessonData, times, (it, s, p) => {
-
                 const evt = new CustomEvent('amgu_load_schedule', { detail: { item: it, shouldScroll: s, pushState: p } });
                 window.dispatchEvent(evt);
             });
@@ -144,43 +152,36 @@ export function render(shouldScroll = false) {
                     }
                 }
             }
-
             sec.appendChild(card);
         });
 
         DOM.scheduleList.appendChild(sec);
     }
 
-    if (renderedDays === 0) {
-        DOM.scheduleList.innerHTML = `<div class="error-block"><h3>тут пар нет</h3><p>попробуй сменить неделю или подгруппу.</p></div>`;
+    if (renderedDays === 0 && activeLines.length > 0) {
+        DOM.scheduleList.innerHTML = `<div class="error-block"><h3>тут пар нет</h3><p>попробуй сменить неделю или настройки фильтров.</p></div>`;
     }
 
-if (shouldScroll && todayElem && !hasAutoscrolled) {
-        setHasAutoscrolled(true); 
 
+    if (shouldScroll && todayElem && !hasAutoscrolled) {
+        setHasAutoscrolled(true); 
         setTimeout(() => {
             const currentLesson = todayElem.querySelector('.current-lesson');
             const nextLesson = todayElem.querySelector('.next-lesson');
             const target = currentLesson || nextLesson || todayElem;
 
             const stopScroll = () => {
-                window.scrollTo({ top: window.scrollY, behavior: 'instant' });
                 window.removeEventListener('wheel', stopScroll);
                 window.removeEventListener('touchmove', stopScroll);
             };
-
             window.addEventListener('wheel', stopScroll);
             window.addEventListener('touchmove', stopScroll);
-
             target.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-            setTimeout(() => {
-                window.removeEventListener('wheel', stopScroll);
-                window.removeEventListener('touchmove', stopScroll);
-            }, 1000);
+            setTimeout(stopScroll, 1000);
         }, 100);
     }
 }
+
 export function renderSubgroupPicker() {
     const container = DOM.subgroupContainer;
     if (!container) return;
@@ -207,10 +208,8 @@ export function renderSubgroupPicker() {
             btn.onclick = () => {
                 const sub = parseInt(btn.dataset.sub);
                 if (sub === currentSubgroup) return;
-
                 setCurrentSubgroup(sub);
-
-                updatePickerUI(container, sub);
+                updatePickerUI(container, 'sub', sub);
 
                 const url = new URL(window.location);
                 if (sub > 0) url.searchParams.set('sub', sub);
@@ -221,21 +220,59 @@ export function renderSubgroupPicker() {
             };
         });
     }
-
-
-    updatePickerUI(container, currentSubgroup);
+    updatePickerUI(container, 'sub', currentSubgroup);
 }
 
 
-function updatePickerUI(container, activeSub) {
+export function renderMoodleToggle() {
+    const container = document.getElementById('moodle-picker'); 
+    if (!container) return;
+
+    const activeLines = _currentSchedule?.timetable_tamplate_lines || [];
+    const hasMoodle = activeLines.some(l => l.classroom_str === "Moodle");
+
+    const section = container.closest('.menu-section');
+    if (section) section.style.display = hasMoodle ? 'block' : 'none';
+    if (!hasMoodle) return;
+
+    if (container.innerHTML.trim() === "") {
+        container.innerHTML = `
+            <button id="moodle-single-btn" class="moodle-toggle-btn">
+                <span class="moodle-text">Moodle</span>
+            </button>
+        `;
+
+        const btn = document.getElementById('moodle-single-btn');
+        btn.onclick = () => {
+            const newVal = !showMoodle;
+            setShowMoodle(newVal);
+            
+            const url = new URL(window.location);
+            if (!newVal) url.searchParams.set('md', '0');
+            else url.searchParams.delete('md');
+            history.replaceState(null, "", url);
+
+            updateMoodleBtnUI();
+            render(false);
+        };
+    }
+    updateMoodleBtnUI();
+}
+
+function updateMoodleBtnUI() {
+    const btn = document.getElementById('moodle-single-btn');
+    if (btn) {
+        btn.classList.toggle('active', showMoodle);
+    }
+}
+
+function updatePickerUI(container, dataAttr, activeVal) {
     const indicator = container.querySelector('.drawer-indicator');
     const buttons = container.querySelectorAll('button');
-
     if (indicator) {
-        indicator.style.transform = `translateX(${activeSub * 100}%)`;
+        indicator.style.transform = `translateX(${activeVal * 100}%)`;
     }
-
     buttons.forEach(btn => {
-        btn.classList.toggle('active', parseInt(btn.dataset.sub) === activeSub);
+        btn.classList.toggle('active', parseInt(btn.dataset[dataAttr]) === activeVal);
     });
 }

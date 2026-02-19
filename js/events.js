@@ -43,6 +43,7 @@ export function setupEventListeners() {
             if (DOM.sideMenu.classList.contains('active')) {
                 if (typeof renderSubgroupPicker === 'function') {
                     renderSubgroupPicker(); 
+                    renderMoodleToggle();
                 }
             }
         }
