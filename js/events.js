@@ -7,6 +7,7 @@ import { setHasAutoscrolled } from './state.js';
 
 export function showSearchView() {
     setCurrentSubgroup(0);
+    setHasAutoscrolled(false);
     const picker = document.getElementById('subgroup-picker');
     if (picker) picker.remove();
 
