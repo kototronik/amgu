@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>feedback — АмГУ Community</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .feedback-card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 16px;
+            margin-top: 10px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        form { width: 100%; }
+
+        .stars-row {
+            display: flex;
+            justify-content: flex-start;
+            gap: 8px;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            width: 100%;
+            border-bottom: 1px solid var(--border);
+        }
+        .star {
+            width: 26px;
+            height: 26px;
+            fill: #30363d;
+            cursor: pointer;
+            transition: transform 0.1s ease;
+        }
+        .star.active { fill: var(--accent); }
+
+        .type-selector {
+            display: flex;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 3px;
+            border-radius: 10px;
+            margin: 5px 0 12px 0;
+            border: 1px solid var(--border);
+            width: fit-content;
+            min-width: 240px;
+        }
+        .type-chip {
+            padding: 6px 12px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            text-align: center;
+            cursor: pointer;
+            border-radius: 7px;
+            transition: all 0.2s;
+            flex: 1;
+        }
+        .type-chip.active {
+            background: var(--accent);
+            color: white;
+        }
+
+        .fb-input, .fb-textarea {
+            width: 100%;
+            background: rgba(255, 255, 255, 0.01);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px;
+            color: var(--text);
+            font-family: inherit;
+            font-size: 0.9rem;
+            outline: none;
+            margin-bottom: 8px;
+        }
+        .fb-textarea { min-height: 100px; resize: none; }
+        .fb-input:focus, .fb-textarea:focus { border-color: var(--accent); }
+
+        .submit-btn {
+            width: 100%;
+            background: var(--accent);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            margin-top: 4px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .status-msg {
+            text-align: center;
+            margin-top: 10px;
+            font-size: 0.75rem;
+            color: var(--text-dim);
+            min-height: 18px;
+        }
+
+        .back-btn {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 8px;
+            opacity: 0.7;
+            cursor: pointer;
+            background: none;
+            border: none;
+            padding: 0;
+        }
+    </style>
+</head>
+<body>
+        <!-- Yandex.Metrika counter -->
+    <script type="text/javascript">
+      (function(m, e, t, r, i, k, a) {
+        m[i] = m[i] || function() {
+          (m[i].a = m[i].a || []).push(arguments)
+        };
+        m[i].l = 1 * new Date();
+        for (var j = 0; j < document.scripts.length; j++) {
+          if (document.scripts[j].src === r) {
+            return;
+          }
+        }
+        k = e.createElement(t), a = e.getElementsByTagName(t)[0], k.async = 1, k.src = r, a.parentNode.insertBefore(k, a)
+      })(window, document, 'script', 'https://mc.yandex.ru/metrika/tag.js?id=106520666', 'ym');
+      ym(106520666, 'init', {
+        ssr: true,
+        webvisor: true,
+        clickmap: true,
+        ecommerce: "dataLayer",
+        referrer: document.referrer,
+        url: location.href,
+        accurateTrackBounce: true,
+        trackLinks: true
+      });
+    </script>
+    <noscript>
+      <div>
+        <img src="https://mc.yandex.ru/watch/106520666" style="position:absolute; left:-9999px;" alt="" />
+      </div>
+    </noscript>
+    <!-- /Yandex.Metrika counter -->
+    <div class="container">
+        <button class="back-btn" onclick="smartBack()">← назад</button>
+
+        <div class="feedback-card">
+            <div class="stars-row" id="star-rating">
+                <svg class="star" data-val="1" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="star" data-val="2" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="star" data-val="3" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="star" data-val="4" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+                <svg class="star" data-val="5" viewBox="0 0 24 24"><path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
+            </div>
+
+            <form id="feedback-form">
+                <div class="type-selector">
+                    <div class="type-chip active" data-type="Идея">идея</div>
+                    <div class="type-chip" data-type="Баг">баг</div>
+                    <div class="type-chip" data-type="Прочее">прочее</div>
+                </div>
+
+                <input type="text" id="fb-contact" class="fb-input" placeholder="ник в тг, если хочешь">
+                <textarea id="fb-comment" class="fb-textarea" placeholder="что бы ты хотел изменить или добавить?" required></textarea>
+
+                <button type="submit" id="fb-submit" class="submit-btn">Отправить</button>
+                <div id="status" class="status-msg"></div>
+            </form>
+        </div>
+    </div>
+
+    <script>
+
+        function smartBack() {
+            if (document.referrer && document.referrer.includes(window.location.hostname) && !document.referrer.includes('feedback.html')) {
+                window.location.href = document.referrer;
+            } else if (window.history.length > 1) {
+                window.history.back();
+            } else {
+                window.location.href = 'index';
+            }
+        }
+    </script>
+    <script src="feedback.js"></script>
+</body>
+</html>

@@ -10,15 +10,44 @@ export const URLS = {
 };
 
 export const Cache = {
+
+    INDEX_KEY: 'amgu_cache_index',
+
     get: (key) => {
         const data = localStorage.getItem(`sched_${key}`);
-        return data ? JSON.parse(data) : null;
+        if (!data) return null;
+        
+
+        Cache._touch(key); 
+        return JSON.parse(data);
     },
+
     set: (key, data) => {
+
+        Cache._touch(key);
+        
+
         localStorage.setItem(`sched_${key}`, JSON.stringify(data));
+
+
+        const index = JSON.parse(localStorage.getItem(Cache.INDEX_KEY) || "[]");
+        if (index.length > 10) {
+            const oldKey = index.shift(); 
+            localStorage.removeItem(`sched_${oldKey}`); 
+            localStorage.setItem(Cache.INDEX_KEY, JSON.stringify(index));
+        }
+    },
+
+
+    _touch: (key) => {
+        let index = JSON.parse(localStorage.getItem(Cache.INDEX_KEY) || "[]");
+
+        index = index.filter(k => k !== key);
+
+        index.push(key);
+        localStorage.setItem(Cache.INDEX_KEY, JSON.stringify(index));
     }
 };
-
 export async function fetchBase() {
     try {
         const [g, t, c] = await Promise.all([
