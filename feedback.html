@@ -58,7 +58,7 @@
         }
         .type-chip.active {
             background: var(--accent);
-            color: white;
+            color: var(--text-btn);
         }
 
         .fb-input, .fb-textarea {
@@ -79,7 +79,7 @@
         .submit-btn {
             width: 100%;
             background: var(--accent);
-            color: white;
+            color: var(--text-btn);
             border: none;
             padding: 14px;
             border-radius: 12px;
@@ -111,6 +111,15 @@
         }
     </style>
 </head>
+    <script>
+  (function() {
+    const savedTheme = localStorage.getItem('user-theme') || 'blue';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.setAttribute('data-theme', savedTheme);
+    });
+  })();
+</script>
 <body>
         <!-- Yandex.Metrika counter -->
     <script type="text/javascript">

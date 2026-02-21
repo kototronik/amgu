@@ -170,3 +170,32 @@ window.addEventListener('amgu_load_schedule', (e) => {
     });
 
 }
+
+function applyTheme(themeName) {
+
+    document.body.setAttribute('data-theme', themeName);
+    
+
+    localStorage.setItem('user-theme', themeName);
+    
+
+    document.querySelectorAll('.theme-dot').forEach(btn => {
+        btn.classList.toggle('active', btn.dataset.theme === themeName);
+    });
+}
+
+
+export function setupThemePicker() {
+    const dots = document.querySelectorAll('.theme-dot');
+    
+
+    const savedTheme = localStorage.getItem('user-theme') || 'blue';
+    applyTheme(savedTheme); 
+
+    dots.forEach(dot => {
+        dot.addEventListener('click', () => {
+            const theme = dot.dataset.theme;
+            applyTheme(theme);
+        });
+    });
+}

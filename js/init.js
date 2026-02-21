@@ -1,12 +1,13 @@
 import { updateBase, combinedData as _combinedData, setCombinedData, setIsNextWeek, isNextWeek, setCurrentSubgroup, setShowMoodle } from './state.js';
 import { setupEventListeners, showSearchView, updateNav } from './events.js';
 import { loadSchedule } from './loader.js';
+import { setupThemePicker } from './events.js';
 
 export default async function init() {
     const now = new Date();
     const dayOfWeek = now.getDay();
     const hour = now.getHours();
-
+    setupThemePicker();
 
 const params_M = new URLSearchParams(window.location.search);
 

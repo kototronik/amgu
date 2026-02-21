@@ -29,7 +29,7 @@
       }
       .back-btn {
         background: var(--accent, #2a2a2a);
-        color: white;
+        color: var(--text-btn);
         border: 1px solid rgba(255,255,255,0.1);
         padding: 12px 24px;
         border-radius: 12px;
@@ -41,6 +41,15 @@
         transform: scale(0.95);
       }
     </style>
+    <script>
+  (function() {
+    const savedTheme = localStorage.getItem('user-theme') || 'blue';
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    document.addEventListener('DOMContentLoaded', () => {
+        document.body.setAttribute('data-theme', savedTheme);
+    });
+  })();
+</script>
   </head>
   <body>
         <!-- Yandex.Metrika counter -->

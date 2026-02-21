@@ -1,10 +1,55 @@
-:root {
+:root, body[data-theme="blue"] {
   --bg: #0d1117;
   --card: #161b22;
   --accent: #58a6ff;
   --text: #c9d1d9;
+  --text-btn: #ffffff;
   --text-dim: #8b949e;
   --border: #30363d6c;
+  --shadow: rgba(88, 166, 255, 0.2);
+  --activ: #306eb4b2;
+}
+
+
+body[data-theme="purple"] {
+--accent: #ffcdd9;      
+  --bg: #130308;         
+  --card: #251c1f;  
+  --text: #fce4ec; 
+  --text-dim: #a38d93;    
+  --text-btn: #F0849d;    
+  --border: #4d3a3f;      
+  --shadow: rgba(240, 132, 157, 0.2); 
+  --activ: #F0849db2;
+}
+
+
+body[data-theme="green"] {
+  --bg: #001304;  
+  --card: #152618;
+  --accent: #238636;
+  --text-dim: #697a71; 
+  --text-btn: #ffffff;
+  --border: #253b23;
+  --shadow: rgba(45, 172, 70, 0.2);
+  --activ: #238636b2;
+}
+
+
+body[data-theme="orange"] {
+  --bg: #140e00; 
+  --card: #261f15;
+  --accent: #f2994a;
+  --text-dim: #7a7369;
+    --text-btn: #ffffff;
+  --border: #3b3123;
+  --shadow: rgba(242, 153, 74, 0.2);
+  --activ: #f2994ab2;
+}
+
+.theme-dot.active {
+  border-color: white !important;
+  transform: scale(1.2);
 }
 
 * {
@@ -161,7 +206,7 @@ input:focus {
 }
 .time {
   color: var(--accent);
-  background: rgba(88, 166, 255, 0.1);
+  background: rgba(185, 185, 185, 0.1);
   padding: 2px 8px;
   border-radius: 6px;
 }
@@ -300,7 +345,7 @@ input:focus {
   transition: color 0.3s;
 }
 .nav-btn.active {
-  color: white;
+  color: var(--text-btn);
 }
 .update-label {
   font-size: 0.7rem;
@@ -437,8 +482,8 @@ input:focus {
 
 
 .lesson-card.current-lesson {
-    border-color: #306eb4b2;
-    box-shadow: 0 0 15px rgba(88, 166, 255, 0.2);
+    border-color: var(--activ);
+    box-shadow: 0 0 15px var(--shadow);
     position: relative;
 }
 
@@ -449,7 +494,7 @@ input:focus {
 }
 
 .lesson-card.next-lesson {
-    box-shadow: 0 0 10px rgba(101, 105, 117, 0.384);
+    box-shadow: 0 0 10px var(--shadow);
     opacity: 0.9;
 }
 
@@ -484,7 +529,7 @@ input:focus {
     height: 42px; 
     background: var(--card);
     border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+    box-shadow: 0 4px 15px var(--shadow);
     overflow: hidden;
     opacity: 0;
     visibility: hidden;
@@ -618,8 +663,8 @@ input:focus {
 
 .subgroup-drawer button.active {
     background: var(--accent);
-    color: white;
-    box-shadow: 0 2px 8px rgba(88, 166, 255, 0.25);
+    color: var(--text-btn);
+    box-shadow: 0 2px 8px var(--shadow);
 }
 
 #moodle-picker {
@@ -653,8 +698,8 @@ input:focus {
 .moodle-toggle-btn.active {
     background: var(--accent); 
     border-color: var(--accent);
-    color: #fff;
-    box-shadow: 0 4px 12px rgba(88, 166, 255, 0.3); 
+    color: var(--text-btn);
+    box-shadow: 0 4px 12px var(--shadow); 
 }
 
 .moodle-toggle-btn:active {
