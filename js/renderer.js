@@ -127,10 +127,10 @@ export function render(shouldScroll = false) {
                     existing.groups.push({ id: l.group_id, name: l.group_str });
                 }
             } else {
-                const newItem = { ...l, groups: [] };
-                if (l.group_str) newItem.groups.push({ id: l.group_id, name: l.group_str });
-                slots[l.lesson].push(newItem);
-            }
+    const newItem = { ...l, groups: [], parity: l.parity }; 
+    if (l.group_str) newItem.groups.push({ id: l.group_id, name: l.group_str });
+    slots[l.lesson].push(newItem);
+}
         });
 
         Object.keys(slots).sort((a, b) => a - b).forEach(lessonNum => {

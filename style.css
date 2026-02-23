@@ -26,7 +26,7 @@ body[data-theme="purple"] {
 
 body[data-theme="green"] {
   --bg: #001304;  
-  --card: #152618;
+  --card: #101d12;
   --accent: #238636;
   --text-dim: #697a71; 
   --text-btn: #ffffff;
@@ -717,4 +717,17 @@ input:focus {
 .moodle-toggle-btn span {
     pointer-events: none;
     user-select: none;
+}
+.parity-label {
+    background: rgba(185, 185, 185, 0.1);
+    display: inline-block;
+    float: right;
+    border-radius: 3px;
+    padding: 2px 8px;  
+    font-size: 0.7rem;
+    font-weight: bold;
+    font-style: italic;
+    opacity: 0.9;
+        color: var(--accent);  
+    /* text-transform: uppercase; */
 }

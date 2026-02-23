@@ -33,6 +33,12 @@ export function renderScheduleCard(slot, times, loadFn) {
     `;
 
     slot.activities.forEach((activity, index) => {
+        let parityText = '';
+    if (activity.parity === 1) {
+        parityText = `<div class="parity-label">1-я неделя</div>`;
+    } else if (activity.parity === 2) {
+        parityText = `<div class="parity-label">2-я неделя</div>`;
+    }
         const subgroupHtml = activity.subgroup > 0 
             ? `<div class="subgroup-row">${activity.subgroup} ПОДГРУППА</div>` 
             : '';
@@ -57,6 +63,7 @@ export function renderScheduleCard(slot, times, loadFn) {
         html += `
             <div class="activity-block">
                 ${subgroupHtml}
+                ${parityText}
                 <div class="discipline">${activity.discipline_str}</div>
                 <div class="info-row">
                     <div class="link-item" data-type="room" data-id="${activity.classroom_id}">
