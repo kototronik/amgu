@@ -110,7 +110,7 @@ export function render(shouldScroll = false) {
         const sec = document.createElement('div');
         sec.className = `day-section ${isToday ? 'is-today' : ''}`;
         if (isToday) todayElem = sec;
-        sec.innerHTML = `<div class="day-title">${dayNames[d]} ${isToday ? '• СЕГОДНЯ' : ''}</div>`;
+        sec.innerHTML = `<div class="day-title">${dayNames[d]}</div>`;
 
         const slots = {};
         dayLessons.forEach(l => {

@@ -167,29 +167,44 @@ input:focus {
   font-size: 1.2rem;
   transition: 0.2s;
 }
-
-.day-section {
-  margin-top: 25px;
-}
 .day-title {
   font-weight: 800;
-  font-size: 0.8rem;
-  color: var(--text-dim);
+  font-size: 0.95rem;
+  color: var(--text);
+  margin-top: 25px;
   margin-bottom: 12px;
   display: flex;
   align-items: center;
   gap: 10px;
-}
-.day-title::after {
-  content: "";
-  flex: 1;
-  height: 1px;
-  background: var(--border);
-}
-.is-today .day-title {
-  color: var(--accent);
+  text-align: center; 
 }
 
+
+.day-title::before {
+  content: "";
+  flex: 1;
+  height: 2px;
+  background: var(--text-dim);
+}
+
+
+.day-title::after {
+  content: "";
+  flex: 1; 
+  height: 2px;
+  background: var(--text-dim);
+}
+
+.is-today .day-title {
+  color: var(--accent);
+  font-size: 1.0rem; 
+  font-weight: 900; 
+}
+
+.is-today .day-title::before,
+.is-today .day-title::after {
+  background: var(--accent);
+}
 .lesson-card {
   background: var(--card);
   border-radius: 16px;
