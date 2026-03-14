@@ -107,3 +107,25 @@ el.onclick = (e) => {
 
     return card;
 }
+export function showWarningPopup(text) {
+
+    const oldToast = document.querySelector('.status-toast');
+    if (oldToast) oldToast.remove();
+
+    const toast = document.createElement('div');
+    toast.className = 'status-toast';
+    toast.innerHTML = `
+        <div style="font-weight: bold; text-align: center;">${text}</div>
+        <div style="font-size: 0.85rem; text-align: center; opacity: 0.9;">
+            сервер не дал нужного ответа..
+        </div>
+        <button onclick="this.parentElement.remove()">Понятно</button>
+    `;
+
+    document.body.appendChild(toast);
+
+
+    setTimeout(() => {
+        if (toast.parentElement) toast.remove();
+    }, 20000);
+}

@@ -10,44 +10,48 @@ export const URLS = {
 };
 
 export const Cache = {
-
     INDEX_KEY: 'amgu_cache_index',
 
     get: (key) => {
-        const data = localStorage.getItem(`sched_${key}`);
-        if (!data) return null;
+        const rawData = localStorage.getItem(`sched_${key}`);
+        if (!rawData) return null;
+
+        const entry = JSON.parse(rawData);
         
 
-        Cache._touch(key); 
-        return JSON.parse(data);
+        const data = entry.timestamp ? entry.data : entry;
+        const timestamp = entry.timestamp || null;
+
+        Cache._touch(key);
+        return { data, timestamp }; 
     },
 
     set: (key, data) => {
-
         Cache._touch(key);
         
+        const entry = {
+            data: data,
+            timestamp: Date.now()
+        };
 
-        localStorage.setItem(`sched_${key}`, JSON.stringify(data));
-
+        localStorage.setItem(`sched_${key}`, JSON.stringify(entry));
 
         const index = JSON.parse(localStorage.getItem(Cache.INDEX_KEY) || "[]");
         if (index.length > 10) {
-            const oldKey = index.shift(); 
-            localStorage.removeItem(`sched_${oldKey}`); 
+            const oldKey = index.shift();
+            localStorage.removeItem(`sched_${oldKey}`);
             localStorage.setItem(Cache.INDEX_KEY, JSON.stringify(index));
         }
     },
 
-
     _touch: (key) => {
         let index = JSON.parse(localStorage.getItem(Cache.INDEX_KEY) || "[]");
-
         index = index.filter(k => k !== key);
-
         index.push(key);
         localStorage.setItem(Cache.INDEX_KEY, JSON.stringify(index));
     }
 };
+
 export async function fetchBase() {
     try {
         const [g, t, c] = await Promise.all([
