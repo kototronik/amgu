@@ -20,7 +20,16 @@ export const DOM = {
     menuOverlay: document.getElementById('menu-overlay'),
     subgroupContainer: document.getElementById('subgroup-container')
 };
-
+export const createSkeletonLoader = () => {
+    return Array(10).fill(0).map(() => `
+        <div class="skeleton-card">
+            <div class="skeleton-line skeleton-title"></div>
+            <div class="skeleton-line skeleton-time"></div>
+            <div class="skeleton-line skeleton-discipline"></div>
+            <div class="skeleton-line skeleton-info"></div>
+        </div>
+    `).join('');
+};
 export function renderScheduleCard(slot, times, loadFn) {
     const card = document.createElement('div');
     card.className = 'lesson-card';

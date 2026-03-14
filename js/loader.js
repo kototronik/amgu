@@ -2,6 +2,7 @@ import { fetchSchedule, Cache } from './api.js';
 import { DOM } from './ui.js';
 import { setCurrentSchedule, currentSubgroup } from './state.js';
 import { render } from './renderer.js';
+import { createSkeletonLoader } from './ui.js';
 
 export async function loadSchedule(item, shouldScroll = true, pushState = true) {
     if (pushState) {
@@ -23,7 +24,8 @@ export async function loadSchedule(item, shouldScroll = true, pushState = true) 
         setCurrentSchedule(cachedData);
         render(shouldScroll);
     } else {
-        DOM.scheduleList.innerHTML = '<div class="loader-placeholder">подожди, барашка домой зашла...</div>';
+        // DOM.scheduleList.innerHTML = '<div class="loader-placeholder">подожди, барашка домой зашла...</div>';
+        DOM.scheduleList.innerHTML = createSkeletonLoader();
     }
 
     try {
