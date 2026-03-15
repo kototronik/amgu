@@ -127,5 +127,5 @@ export function showWarningPopup(text) {
 
     setTimeout(() => {
         if (toast.parentElement) toast.remove();
-    }, 20000);
+    }, 30000);
 }

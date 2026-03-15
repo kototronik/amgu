@@ -1,3 +1,4 @@
+import { getWeekNumber } from './utils.js';
 export const URLS = {
     groups: 'https://cabinet.amursu.ru/public_api/groups',
     teachers: 'https://cabinet.amursu.ru/public_api/teachers',
@@ -17,13 +18,27 @@ export const Cache = {
         if (!rawData) return null;
 
         const entry = JSON.parse(rawData);
-        
-
-        const data = entry.timestamp ? entry.data : entry;
+        let data = entry.timestamp ? entry.data : entry;
         const timestamp = entry.timestamp || null;
 
+        // --- ЛОГИКА СТРАХОВКИ ОТ СЛОМАННОГО СЕРВЕРА ---
+        if (timestamp && data && data.current_week) {
+            const savedWeek = getWeekNumber(new Date(timestamp));
+            const currentWeek = getWeekNumber(new Date());
+
+            if (savedWeek !== currentWeek) {
+                const diff = Math.abs(currentWeek - savedWeek);
+                // Если прошло нечетное кол-во недель (1, 3, 5...), меняем тип недели
+                if (diff % 2 !== 0) {
+                    data.current_week = data.current_week === 1 ? 2 : 1;
+                    console.log(`[Cache] Неделя автоматически переключена: ${data.current_week}`);
+                }
+            }
+        }
+        // ----------------------------------------------
+
         Cache._touch(key);
-        return { data, timestamp }; 
+        return { data, timestamp };
     },
 
     set: (key, data) => {
@@ -31,7 +46,7 @@ export const Cache = {
         
         const entry = {
             data: data,
-            timestamp: Date.now()
+            timestamp: Date.now() // Сохраняем точное время записи
         };
 
         localStorage.setItem(`sched_${key}`, JSON.stringify(entry));

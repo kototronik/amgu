@@ -52,3 +52,25 @@ export function highlightText(fullText, query, trans) {
     }
     return fullText;
 }
+export function getRelativeTimeString(timestamp) {
+    const now = Date.now();
+    const diffInSeconds = Math.floor((now - timestamp) / 1000);
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    const diffInDays = Math.floor(diffInHours / 24);
+
+    if (diffInMinutes < 1) return 'только что';
+    if (diffInMinutes < 60) return `${diffInMinutes} мин. назад`;
+    if (diffInHours < 24) return `${diffInHours} ч. назад`;
+    if (diffInDays === 1) return 'вчера';
+    
+    return `${diffInDays} дн. назад`;
+}
+export function getWeekNumber(date) {
+    const d = new Date(date);
+    d.setHours(0, 0, 0, 0);
+    // Устанавливаем на четверг текущей недели, чтобы избежать проблем с началом года
+    d.setDate(d.getDate() + 4 - (d.getDay() || 7));
+    const yearStart = new Date(d.getFullYear(), 0, 1);
+    return Math.ceil((((d - yearStart) / 86400000) + 1) / 7);
+}
