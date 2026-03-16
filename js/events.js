@@ -171,19 +171,32 @@ window.addEventListener('amgu_load_schedule', (e) => {
 
 }
 
+
 function applyTheme(themeName) {
-
     document.body.setAttribute('data-theme', themeName);
-    
-
     localStorage.setItem('user-theme', themeName);
+
+    const themeColors = {
+        'blue': '#0d1117',
+        'purple': '#130308',
+        'green': '#001304',
+        'orange': '#140e00',
+    };
+
+    let metaThemeColor = document.querySelector('meta[name="theme-color"]');
     
+    if (!metaThemeColor) {
+        metaThemeColor = document.createElement('meta');
+        metaThemeColor.name = "theme-color";
+        document.head.appendChild(metaThemeColor);
+    }
+
+    metaThemeColor.setAttribute('content', themeColors[themeName] || '#0d1117');
 
     document.querySelectorAll('.theme-dot').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.theme === themeName);
     });
 }
-
 
 export function setupThemePicker() {
     const dots = document.querySelectorAll('.theme-dot');

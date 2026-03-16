@@ -1,0 +1,38 @@
+{
+  "short_name": "АмГУ CE",
+  "name": "АмГУ Community Edition",
+  "description": "расписание АмГУ",
+  "icons": [
+    {
+      "src": "amgu_192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "amgu_512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "./screenshots/mobile.png",
+      "sizes": "1170x2532",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Мобильное расписание"
+    },
+    {
+      "src": "./screenshots/desktop.png",
+      "sizes": "2560x1440",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Десктопная версия"
+    }
+  ],
+  "start_url": "./index.html",
+  "display": "standalone",
+  "scope": "./",
+  "background_color": "#0d1117",
+  "theme_color": "#0d1117"
+}

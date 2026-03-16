@@ -21,21 +21,19 @@ export const Cache = {
         let data = entry.timestamp ? entry.data : entry;
         const timestamp = entry.timestamp || null;
 
-        // --- ЛОГИКА СТРАХОВКИ ОТ СЛОМАННОГО СЕРВЕРА ---
         if (timestamp && data && data.current_week) {
             const savedWeek = getWeekNumber(new Date(timestamp));
             const currentWeek = getWeekNumber(new Date());
 
             if (savedWeek !== currentWeek) {
                 const diff = Math.abs(currentWeek - savedWeek);
-                // Если прошло нечетное кол-во недель (1, 3, 5...), меняем тип недели
                 if (diff % 2 !== 0) {
                     data.current_week = data.current_week === 1 ? 2 : 1;
                     console.log(`[Cache] Неделя автоматически переключена: ${data.current_week}`);
                 }
             }
         }
-        // ----------------------------------------------
+        // 
 
         Cache._touch(key);
         return { data, timestamp };
@@ -46,7 +44,7 @@ export const Cache = {
         
         const entry = {
             data: data,
-            timestamp: Date.now() // Сохраняем точное время записи
+            timestamp: Date.now() 
         };
 
         localStorage.setItem(`sched_${key}`, JSON.stringify(entry));
