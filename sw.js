@@ -1,8 +1,8 @@
 const CACHE_NAME = 'amgu-pwa-v1.1'; 
 
 const ASSETS = [
+  '/',
   './',
-  './index.html',
   './manifest.json',
   './style.css',
   './amgu_192.png',
