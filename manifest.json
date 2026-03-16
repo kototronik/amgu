@@ -30,7 +30,7 @@
       "label": "Десктопная версия"
     }
   ],
-  "start_url": "./index.html",
+  "start_url": "./",
   "display": "standalone",
   "scope": "./",
   "background_color": "#0d1117",

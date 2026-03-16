@@ -1,4 +1,4 @@
-const CACHE_NAME = 'amgu-pwa-v1'; 
+const CACHE_NAME = 'amgu-pwa-v1.1'; 
 
 const ASSETS = [
   './',
